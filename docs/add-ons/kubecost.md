@@ -30,6 +30,33 @@ Deploy Kubecost with custom `values.yaml`
   }
 ```
 
+### Existing node-exporter and kube-state-metrics
+If you already have `node-exporter` or `kube-state-metrics` installed in your cluster you may run into conflicts as the kubecost helm chart will also try to install those components. In this case, [kubecost recommends disabling these components in the kubecost helm chart](https://docs.kubecost.com/install-and-configure/install/custom-prom#disable-node-exporter-and-kube-state-metrics-recommended). Kubecost will leverage the pre-existing metrics agents to gather resource usage details. 
+
+Example helm_config to disable those components:
+
+```hcl
+enable_kubecost = true
+kubecost_helm_config = {
+  set = [
+    {
+      name  = "prometheus.nodeExporter.enabled",
+      value = false,
+    },
+    {
+      name  = "prometheus.serviceAccounts.nodeExporter.create",
+      value = false
+    },
+    {
+      name  = "prometheus.kubeStateMetrics.enabled",
+      value = false
+    },
+  ]
+}
+```
+
+
+
 ### GitOps Configuration
 
 The following properties are made available for use when managing the add-on via GitOps.
